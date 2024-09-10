@@ -1,13 +1,32 @@
-for i in range(1,9):
-    for j in range(1,i+1):
-        print("{0}*{1}={2:2}".format(j,i,i*j),end=' ')
-    print('')
-# Output:
-# 1*1= 1
-# 1*2= 2 2*2= 4
-# 1*3= 3 2*3= 6 3*3= 9
-# 1*4= 4 2*4= 8 3*4=12 4*4=16
-# 1*5= 5 2*5=10 3*5=15 4*5=20 5*5=25
-# 1*6= 6 2*6=12 3*6=18 4*6=24 5*6=30 6*6=36
-# 1*7= 7 2*7=14 3*7=21 4*7=28 5*7=35 6*7=42 7*7=49
-# 1*8= 8 2*8=16 3*8=24 4*8=32 5*8=40 6*8=48 7*8=56 8*8=64
+import numpy as np
+import PIL.Image as img
+
+img_njucm = img.open('njucm.jpg')
+img_array = np.array(img_njucm)
+
+# Red_Channel
+red_channel = img_array.copy()
+red_channel[:, :, 1] = 0
+red_channel[:, :, 2] = 0
+
+# Green_Channel
+green_channel = img_array.copy()
+green_channel[:, :, 0] = 0
+green_channel[:, :, 2] = 0
+
+# Blue_Channel
+blue_channel = img_array.copy()
+blue_channel[:, :, 0] = 0
+blue_channel[:, :, 1] = 0
+
+# 转换图像
+red_image = img.fromarray(red_channel)
+green_image = img.fromarray(green_channel)
+blue_image = img.fromarray(blue_channel)
+gray_image = img_njucm.convert('L')
+
+# 保存修改后的图像
+red_image.save('red_channel_njucm.jpg')
+green_image.save('green_channel_njucm.jpg')
+blue_image.save('blue_channel_njucm.jpg')
+gray_image.save('gray_njucm.jpg')

@@ -1,50 +1,7 @@
-# 相同食材改变顺序视作不同
-print("case1:")
-diet=['西红柿','花椰菜','黄瓜','牛排','虾仁']
-for x in range(0,5):
-   for y in range(0,5):
-      if not(x==y):
-         print(f"{diet[x] }{diet[y] }".format(diet[x],diet[y]))
+from turtle import *
 
-# 相同食材改变顺序视作相同
-print("-"*20)
-print("case2:")
-diet=['西红柿','花椰菜','黄瓜','牛排','虾仁']
-for x in range(0,5):
-   for y in range(x+1,5):
-     print(f"{diet[x] }{diet[y] }".format(diet[x],diet[y]))
-
-# Output:
-# case1:
-# 西红柿花椰菜
-# 西红柿黄瓜
-# 西红柿牛排
-# 西红柿虾仁
-# 花椰菜西红柿
-# 花椰菜黄瓜
-# 花椰菜牛排
-# 花椰菜虾仁
-# 黄瓜西红柿
-# 黄瓜花椰菜
-# 黄瓜牛排
-# 黄瓜虾仁
-# 牛排西红柿
-# 牛排花椰菜
-# 牛排黄瓜
-# 牛排虾仁
-# 虾仁西红柿
-# 虾仁花椰菜
-# 虾仁黄瓜
-# 虾仁牛排
-# --------------------
-# case2:
-# 西红柿花椰菜
-# 西红柿黄瓜
-# 西红柿牛排
-# 西红柿虾仁
-# 花椰菜黄瓜
-# 花椰菜牛排
-# 花椰菜虾仁
-# 黄瓜牛排
-# 黄瓜虾仁
-# 牛排虾仁
+for steps in range(1, 500, 3):
+    for c in ('red', 'orange', 'yellow', 'green', 'blue', 'purple'):
+        color(c)
+        forward(steps)
+        right(30)
