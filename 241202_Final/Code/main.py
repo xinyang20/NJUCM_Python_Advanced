@@ -1,13 +1,11 @@
 import sys
 import cv2
-import dlib
+import mediapipe as mp
+from deepface import DeepFace
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import QTimer
 
-# 初始化 Dlib 的人脸检测器和特征提取器
-detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
 class FaceRecognitionApp(QMainWindow):
     def __init__(self):
@@ -15,7 +13,12 @@ class FaceRecognitionApp(QMainWindow):
         self.setWindowTitle("多功能人脸识别系统")
         self.setGeometry(100, 100, 800, 600)
 
-        # 创建用于显示视频的标签
+        # Mediapipe 初始化
+        self.mp_face_detection = mp.solutions.face_detection
+        self.mp_draw = mp.solutions.drawing_utils
+        self.face_detection = self.mp_face_detection.FaceDetection()
+
+        # 创建视频显示标签
         self.image_label = QLabel(self)
         self.image_label.resize(800, 600)
 
@@ -29,35 +32,63 @@ class FaceRecognitionApp(QMainWindow):
         # 初始化摄像头
         self.cap = cv2.VideoCapture(0)
 
-        # 设置定时器以刷新视频帧
+        # 定时器刷新视频帧
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(30)
 
+    def analyze_face(self, frame):
+        """使用 DeepFace 分析面部属性"""
+        try:
+            results = DeepFace.analyze(
+                frame, actions=["age", "gender", "emotion", "race"], enforce_detection=False
+            )
+            return results
+        except Exception as e:
+            print(f"DeepFace 分析失败: {e}")
+            return None
+
     def update_frame(self):
+        """更新摄像头帧"""
         ret, frame = self.cap.read()
-        if ret:
-            # 转换为灰度图像
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # 检测人脸
-            faces = detector(gray)
-            for face in faces:
-                # 获取面部特征点
-                landmarks = predictor(gray, face)
-                # 绘制特征点
-                for n in range(0, 68):
-                    x = landmarks.part(n).x
-                    y = landmarks.part(n).y
-                    cv2.circle(frame, (x, y), 2, (255, 0, 0), -1)
-            # 将图像转换为 Qt 格式并显示
-            rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            h, w, ch = rgb_image.shape
-            bytes_per_line = ch * w
-            qt_image = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
-            self.image_label.setPixmap(QPixmap.fromImage(qt_image))
+        if not ret:
+            return
+
+        # 转换为 RGB
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # Mediapipe 人脸检测
+        results = self.face_detection.process(rgb_frame)
+        if results.detections:
+            for detection in results.detections:
+                bbox = detection.location_data.relative_bounding_box
+                h, w, _ = frame.shape
+                x1, y1 = int(bbox.xmin * w), int(bbox.ymin * h)
+                x2, y2 = int((bbox.xmin + bbox.width) * w), int((bbox.ymin + bbox.height) * h)
+
+                # 绘制人脸检测框
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+                # 截取人脸区域进行分析
+                face_crop = rgb_frame[y1:y2, x1:x2]
+                face_analysis = self.analyze_face(face_crop)
+                if face_analysis:
+                    # 在检测框上显示年龄、性别和表情
+                    age = face_analysis["age"]
+                    gender = face_analysis["gender"]
+                    emotion = face_analysis["dominant_emotion"]
+                    text = f"Age: {age}, Gender: {gender}, Emotion: {emotion}"
+                    cv2.putText(frame, text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+
+        # 转换为 Qt 格式显示
+        qt_image = QImage(frame.data, frame.shape[1], frame.shape[0], frame.strides[0], QImage.Format_BGR888)
+        self.image_label.setPixmap(QPixmap.fromImage(qt_image))
 
     def closeEvent(self, event):
+        """释放资源"""
         self.cap.release()
+        self.face_detection.close()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
