@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多维人脸分析系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>多维人脸分析系统</h1>
+
+        <!-- 上传区域 -->
+        <div class="upload-section">
+            <label for="solution">选择分析方案：</label>
+            <select id="solution">
+                {% for key, value in solutions.items() %}
+                    <option value="{{ value.id }}">{{ value.name }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="detection-options">
+                <h3>检测选项：</h3>
+                <!-- 动态加载 -->
+            </div>
+
+            <div class="file-upload">
+                <input type="file" id="imageInput" accept="image/*">
+                <button id="analyzeBtn" disabled>开始分析</button>
+            </div>
+        </div>
+
+        <!-- 结果区域 -->
+        <div class="result-section">
+            <img id="previewImage" src="" alt="预览图片" style="display: none;">
+            <p id="loading">分析中，请稍候...</p>
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>功能</th>
+                        <th>结果</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

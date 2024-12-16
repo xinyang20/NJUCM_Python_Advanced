@@ -1,0 +1,92 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多维人脸分析系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>多维人脸分析系统</h1>
+
+        <div class="upload-section">
+            <div class="options-panel">
+                <div class="solution-select">
+                    <label for="solution">选择分析方案：</label>
+                    <select id="solution" name="solution">
+                        {% for key, value in solutions.items() %}
+                            <option value="{{ value.id }}">{{ key }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="solution-info">
+                        <div id="solution-description" class="solution-description"></div>
+                        <div class="solution-details">
+                            <div id="solution-features" class="solution-features"></div>
+                            <div id="solution-model" class="solution-model"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detection-options">
+                    <h3>检测选项：</h3>
+                    <label>
+                        <input type="checkbox" name="detection" value="age" checked> 年龄检测
+                    </label>
+                    <label>
+                        <input type="checkbox" name="detection" value="gender" checked> 性别检测
+                    </label>
+                    <label>
+                        <input type="checkbox" name="detection" value="emotion" checked> 情绪检测
+                    </label>
+                    <label>
+                        <input type="checkbox" name="detection" value="race" checked> 种族检测
+                    </label>
+                </div>
+            </div>
+
+            <div class="file-upload">
+                <input type="file" id="imageInput" accept="image/*">
+                <button id="analyzeBtn" disabled>开始分析</button>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="image-display">
+                <img id="previewImage" src="" alt="预览图片" style="display: none;">
+                <img id="resultImage" src="" alt="结果图片" style="display: none;">
+            </div>
+
+            <div class="analysis-results">
+                <h2>分析结果</h2>
+                <table id="resultTable">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>性别</th>
+                            <th>年龄</th>
+                            <th>情绪</th>
+                            <th>种族</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="download-section" style="display: none;">
+                <button id="downloadImage">下载结果图片</button>
+                <button id="downloadCSV">下载分析结果</button>
+            </div>
+        </div>
+
+        <div id="loadingOverlay" style="display: none;">
+            <div class="spinner"></div>
+            <p>正在分析中...</p>
+        </div>
+    </div>
+
+    <script type="module" src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多维人脸分析系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>多维人脸分析系统</h1>
+
+        <div class="system-info">
+            <div class="solution-info">
+                <div class="solution-description">
+                    DeepFace是一个流行的开源人脸分析解决方案，基于深度学习技术。优点是易于使用、功能全面，支持多种预训练模型。适合一般用途和原型开发。速度适中，准确率较好。
+                </div>
+                <div class="solution-details">
+                    <div class="solution-features">
+                        <h4>支持的功能:</h4>
+                        <ul class="feature-list">
+                            <li>年龄预测</li>
+                            <li>性别识别</li>
+                            <li>情绪分析</li>
+                            <li>种族识别</li>
+                        </ul>
+                    </div>
+                    <div class="solution-model">
+                        <h4>技术细节:</h4>
+                        <div class="model-info">VGG-Face/OpenCV backend</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-panel">
+            <div class="detection-options">
+                <h3>检测选项：</h3>
+                <div class="options-grid">
+                    <label>
+                        <input type="checkbox" name="detection" value="age" checked> 年龄检测
+                    </label>
+                    <label>
+                        <input type="checkbox" name="detection" value="gender" checked> 性别检测
+                    </label>
+                    <label>
+                        <input type="checkbox" name="detection" value="emotion" checked> 情绪检测
+                    </label>
+                    <label>
+                        <input type="checkbox" name="detection" value="race" checked> 种族检测
+                    </label>
+                </div>
+            </div>
+
+            <div class="file-upload-section">
+                <span class="file-input-container">
+                    <input type="file" id="imageInput" accept="image/*">
+                </span>
+                <span class="analyze-button-container">
+                    <button id="analyzeBtn" disabled>开始分析</button>
+                </span>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="image-display">
+                <img id="previewImage" src="" alt="预览图片" style="display: none;">
+                <img id="resultImage" src="" alt="结果图片" style="display: none;">
+            </div>
+
+            <div class="analysis-results">
+                <h2>分析结果</h2>
+                <table id="resultTable">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>性别</th>
+                            <th>年龄</th>
+                            <th>情绪</th>
+                            <th>种族</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="download-section" style="display: none;">
+                <button id="downloadResults" class="download-button">下载全部结果</button>
+            </div>
+        </div>
+
+        <div id="loadingOverlay" style="display: none;">
+            <div class="spinner"></div>
+            <p>正在分析中...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
